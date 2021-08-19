@@ -37,13 +37,34 @@ mack_creek_lengths <- mack_creek_vertebrates %>%
   clean_names() %>% 
   select(year:sampledate) %>% 
   filter(section == "CC") %>% 
-  mutate(across(where(is.character, tolower))) %>% 
+  mutate(across(where(is.character), tolower)) %>% 
   drop_na(species) %>% 
   group_by(species) %>% 
   summarize(mean_length_cm = mean(length1, na.rm = TRUE),
             sd_length_cm = sd(length1, na.rm = TRUE)) %>% 
   ungroup()
+
+
 ```
+
+```{r}
+
+# Reprex
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(palmerpenguins)
+
+penguins_tolower <- penguins %>% 
+  mutate(across(where(is.character), tolower))
+
+View(penguins_tolower)
+
+# Note that species and island are factors, not characters.
+
+```
+
 
 ### reprex 2
 
@@ -51,14 +72,37 @@ Identify what is causing the problem in the code below (there's only one thing).
 
 ```{r}
 # Example 2:
-mack_creek_vertebrates %>% 
+mack_creek_vert_clean <- mack_creek_vertebrates %>% 
   clean_names() %>% 
   filter(species == "ONCL") %>% 
   ggplot(aes(x = length1, y = weight)) +
-         geom_point(aes(shape = 12), color = "purple") +
+         geom_point(shape = 12, color = "purple") +
          theme_minimal() +
          labs(x = "Cutthroat trout length (cm)",
               y = "Weight (g)")
+
+mack_creek_vert_clean
+```
+
+```{r}
+# Reprex
+
+library(tidyverse)
+
+df <- tribble(
+  ~name, ~height, ~food_consumed,
+  "Teddy", 2.2, "12",
+  "Khora", 3.1, "15",
+  "Waffle", 1.0, "9"
+)
+
+df_clean <- df %>% 
+  ggplot(aes(x = height, y = food_consumed)) +
+  geom_point(shape = 4, color = "blue")
+
+# only apply arguments in aes() if the the argument is not based on a variable
+
+df_clean
 ```
 
 ## End
